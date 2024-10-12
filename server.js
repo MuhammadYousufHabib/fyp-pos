@@ -27,6 +27,7 @@ app.use(morgan("dev"));
 
 //routes
 app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/categories", require("./routes/categoriesRoute"));
 
 app.use("/api", (req, res, next) => {
   // const cookie = req.cookies;
@@ -67,6 +68,8 @@ app.use("/api", (req, res, next) => {
 app.use("/api/items", require("./routes/itemRoutes"));
 
 app.use("/api/bills", require("./routes/billsRoute"));
+
+// app.use("/api/categories", require("./routes/categoriesRoute"));
 
 app.get("/api/status", async (req, res) => {
   console.log("hello status check");
