@@ -98,7 +98,7 @@ const DefaultLayout = ({ children }) => {
             className="cart-item d-flex jusitfy-content-space-between flex-row"
             onClick={() => navigate("/cart")}
           >
-            <p>{cartItems.length}</p>
+            <p>{cartItems.reduce((total, items) => total + items.quantity, 0)}</p>
             <ShoppingCartOutlined />
           </div>
         </Header>
