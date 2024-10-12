@@ -15,8 +15,14 @@ const Login = () => {
       });
       const res = await axios.post("/api/users/login", value);
       dispatch({ type: "HIDE_LOADING" });
+      console.log(res.data);
+      dispatch({
+        type: "USER_LOGIN",
+        payload: res.data.data,
+      });
+
       message.success("user login Succesfully");
-      localStorage.setItem("auth", JSON.stringify(res.data));
+      // localStorage.setItem("auth", JSON.stringify(res.data));
       navigate("/");
     } catch (error) {
       dispatch({ type: "HIDE_LOADING" });
@@ -39,7 +45,7 @@ const Login = () => {
           <h1>POS APP</h1>
           <h3>Login Page</h3>
           <Form layout="vertical" onFinish={handleSubmit}>
-            <Form.Item name="userId" label="User ID">
+            <Form.Item name="email" label="Email">
               <Input />
             </Form.Item>
             <Form.Item name="password" label="Password">

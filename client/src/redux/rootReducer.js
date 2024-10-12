@@ -1,6 +1,9 @@
 const intialState = {
   loading: false,
   cartItems: [],
+  user: {},
+  isLogin: null,
+  role: null,
 };
 
 export const rootReducer = (state = intialState, action) => {
@@ -49,6 +52,29 @@ export const rootReducer = (state = intialState, action) => {
           (item) => item._id !== action.payload._id
         ),
       };
+
+    case "USER_LOGIN": {
+      console.log("here its " + action.payload.name, action.payload.isAdmin);
+      if (action.payload.name && action.payload?.email) {
+        console.log(
+          "wayl",
+          action.payload.name,
+          action.payload.isAdmin,
+          action.payload._id
+        );
+        const role = action.payload?.isAdmin ? "admin" : "user";
+        const user = {
+          firstname: action.payload.name,
+          email: action.payload?.email,
+          _id: action.payload?._id,
+        };
+        return { ...state, isLogin: true, role: role, user: user };
+      }
+    }
+
+    case "USER_LOGOUT": {
+      return { ...state, isLogin: false, role: null, user: null };
+    }
     default:
       return state;
   }

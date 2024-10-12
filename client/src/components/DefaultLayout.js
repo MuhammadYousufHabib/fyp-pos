@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Layout, Menu } from "antd";
 import { Link, useNavigate } from "react-router-dom";
+
+import axios from "axios";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -18,6 +20,7 @@ const { Header, Sider, Content } = Layout;
 
 const DefaultLayout = ({ children }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { cartItems, loading } = useSelector((state) => state.rootReducer);
   const [collapsed, setCollapsed] = useState(false);
 
@@ -28,6 +31,24 @@ const DefaultLayout = ({ children }) => {
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
+
+  const logoutHandler = async () => {
+    try {
+      const response = await axios.post(
+        `/api/users/logout`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+
+      dispatch({
+        type: "USER_LOGOUT",
+      });
+    } catch (err) {
+      console.log("error in logoutHandler" + err);
+    }
+  };
 
   return (
     <Layout>
@@ -57,8 +78,7 @@ const DefaultLayout = ({ children }) => {
             key="/logout"
             icon={<LogoutOutlined />}
             onClick={() => {
-              localStorage.removeItem("auth");
-              navigate("/login");
+              logoutHandler();
             }}
           >
             Logout
