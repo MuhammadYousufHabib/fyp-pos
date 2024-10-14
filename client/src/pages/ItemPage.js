@@ -4,39 +4,49 @@ import { useDispatch } from "react-redux";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { Modal, Button, Table, Form, Input, Select, message } from "antd";
+
 const ItemPage = () => {
   const dispatch = useDispatch();
   const [itemsData, setItemsData] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [popupModal, setPopupModal] = useState(false);
   const [editItem, setEditItem] = useState(null);
+
+  // Fetch categories dynamically
+  const getCategories = async () => {
+    try {
+      const { data } = await axios.get("/api/categories/get-categories");
+      setCategories(data);
+    } catch (error) {
+      console.log("Error fetching categories:", error);
+    }
+  };
+
+  // Fetch items
   const getAllItems = async () => {
     try {
-      dispatch({
-        type: "SHOW_LOADING",
-      });
+      dispatch({ type: "SHOW_LOADING" });
       const { data } = await axios.get("/api/items/get-item");
       setItemsData(data);
       dispatch({ type: "HIDE_LOADING" });
-      console.log(data);
     } catch (error) {
       dispatch({ type: "HIDE_LOADING" });
       console.log(error);
     }
   };
-  //useEffect
+
   useEffect(() => {
+    getCategories();
     getAllItems();
     //eslint-disable-next-line
   }, []);
 
-  //handle deleet
+  // Handle delete
   const handleDelete = async (record) => {
     try {
-      dispatch({
-        type: "SHOW_LOADING",
-      });
+      dispatch({ type: "SHOW_LOADING" });
       await axios.post("/api/items/delete-item", { itemId: record._id });
-      message.success("Item Deleted Succesfully");
+      message.success("Item Deleted Successfully");
       getAllItems();
       setPopupModal(false);
       dispatch({ type: "HIDE_LOADING" });
@@ -47,7 +57,7 @@ const ItemPage = () => {
     }
   };
 
-  //able data
+  // Table columns
   const columns = [
     { title: "Name", dataIndex: "name" },
     {
@@ -58,7 +68,6 @@ const ItemPage = () => {
       ),
     },
     { title: "Price", dataIndex: "price" },
-
     {
       title: "Actions",
       dataIndex: "_id",
@@ -82,15 +91,13 @@ const ItemPage = () => {
     },
   ];
 
-  // handle form  submit
+  // Handle form submit for adding/editing item
   const handleSubmit = async (value) => {
     if (editItem === null) {
       try {
-        dispatch({
-          type: "SHOW_LOADING",
-        });
-        const res = await axios.post("/api/items/add-item", value);
-        message.success("Item Added Succesfully");
+        dispatch({ type: "SHOW_LOADING" });
+        await axios.post("/api/items/add-item", value);
+        message.success("Item Added Successfully");
         getAllItems();
         setPopupModal(false);
         dispatch({ type: "HIDE_LOADING" });
@@ -101,14 +108,12 @@ const ItemPage = () => {
       }
     } else {
       try {
-        dispatch({
-          type: "SHOW_LOADING",
-        });
+        dispatch({ type: "SHOW_LOADING" });
         await axios.put("/api/items/edit-item", {
           ...value,
           itemId: editItem._id,
         });
-        message.success("Item Updated Succesfully");
+        message.success("Item Updated Successfully");
         getAllItems();
         setPopupModal(false);
         dispatch({ type: "HIDE_LOADING" });
@@ -133,7 +138,7 @@ const ItemPage = () => {
 
       {popupModal && (
         <Modal
-          title={`${editItem !== null ? "Edit Item " : "Add New Item"}`}
+          title={`${editItem !== null ? "Edit Item" : "Add New Item"}`}
           visible={popupModal}
           onCancel={() => {
             setEditItem(null);
@@ -157,9 +162,11 @@ const ItemPage = () => {
             </Form.Item>
             <Form.Item name="category" label="Category">
               <Select>
-                <Select.Option value="drinks">Drinks</Select.Option>
-                <Select.Option value="rice">Rice</Select.Option>
-                <Select.Option value="noodles">Noodels</Select.Option>
+                {categories.map((category) => (
+                  <Select.Option key={category._id} value={category.slug}>
+                    {category.name}
+                  </Select.Option>
+                ))}
               </Select>
             </Form.Item>
 
