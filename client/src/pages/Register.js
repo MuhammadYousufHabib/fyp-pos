@@ -42,7 +42,7 @@ const Register = () => {
             <Form.Item name="name" label="Name">
               <Input />
             </Form.Item>
-            <Form.Item name="userId" label="User ID">
+            <Form.Item name="email" label="Email">
               <Input />
             </Form.Item>
             <Form.Item name="password" label="Password">

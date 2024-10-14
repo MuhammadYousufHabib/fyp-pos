@@ -1,6 +1,9 @@
 const intialState = {
   loading: false,
   cartItems: [],
+  user: {},
+  isLogin: null,
+  role: null,
 };
 
 export const rootReducer = (state = intialState, action) => {
@@ -16,10 +19,23 @@ export const rootReducer = (state = intialState, action) => {
         loading: false,
       };
     case "ADD_TO_CART":
-      return {
-        ...state,
-        cartItems: [...state.cartItems, action.payload],
-      };
+      const item = action.payload;
+      const existItem = state.cartItems.find((x) => x._id === item._id);
+
+      if (existItem) {
+        // Update quantity if item exists
+        return {
+          ...state,
+          cartItems: state.cartItems.map((x) =>
+            x._id === existItem._id ? { ...x, quantity: x.quantity + 1 } : x
+          ),
+        };
+      } else {
+        return {
+          ...state,
+          cartItems: [...state.cartItems, item],
+        };
+      }
     case "UPDATE_CART":
       return {
         ...state,
@@ -36,6 +52,29 @@ export const rootReducer = (state = intialState, action) => {
           (item) => item._id !== action.payload._id
         ),
       };
+
+    case "USER_LOGIN": {
+      console.log("here its " + action.payload.name, action.payload.isAdmin);
+      if (action.payload.name && action.payload?.email) {
+        console.log(
+          "wayl",
+          action.payload.name,
+          action.payload.isAdmin,
+          action.payload._id
+        );
+        const role = action.payload?.isAdmin ? "admin" : "user";
+        const user = {
+          firstname: action.payload.name,
+          email: action.payload?.email,
+          _id: action.payload?._id,
+        };
+        return { ...state, isLogin: true, role: role, user: user };
+      }
+    }
+
+    case "USER_LOGOUT": {
+      return { ...state, isLogin: false, role: null, user: null };
+    }
     default:
       return state;
   }
