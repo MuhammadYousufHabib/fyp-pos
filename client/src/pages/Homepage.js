@@ -58,7 +58,11 @@ const Homepage = () => {
     } catch (error) {
       console.log(error);
     }
+
     getCategories()
+    
+    setIsModalVisible(false);
+
   };
 
   const handleDeleteCategory = async (id) => {

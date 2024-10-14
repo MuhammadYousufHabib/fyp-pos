@@ -11,6 +11,7 @@ const ItemPage = () => {
   const [categories, setCategories] = useState([]);
   const [popupModal, setPopupModal] = useState(false);
   const [editItem, setEditItem] = useState(null);
+  const [groupedItems, setGroupedItems] = useState({}); // For storing items grouped by category
 
   // Fetch categories dynamically
   const getCategories = async () => {
@@ -29,10 +30,29 @@ const ItemPage = () => {
       const { data } = await axios.get("/api/items/get-item");
       setItemsData(data);
       dispatch({ type: "HIDE_LOADING" });
+      
+      // Group items by category
+      groupItemsByCategory(data);
     } catch (error) {
       dispatch({ type: "HIDE_LOADING" });
       console.log(error);
     }
+  };
+
+  // Function to group items by category
+  const groupItemsByCategory = (items) => {
+    const grouped = {};
+    items.forEach((item) => {
+      const categoryId = item.category; // Assuming category is the field with the category ID
+      if (!grouped[categoryId]) {
+        grouped[categoryId] = {
+          items: [],
+          categoryName: categories.find(cat => cat._id === categoryId)?.name // Get category name from categories array
+        };
+      }
+      grouped[categoryId].items.push(item);
+    });
+    setGroupedItems(grouped);
   };
 
   useEffect(() => {
@@ -134,7 +154,18 @@ const ItemPage = () => {
         </Button>
       </div>
 
-      <Table columns={columns} dataSource={itemsData} bordered />
+      {/* Render grouped items */}
+      {Object.keys(groupedItems).map((categoryId) => (
+        <div key={categoryId}>
+          <h2>{groupedItems[categoryId].categoryName}</h2>
+          <Table 
+            columns={columns} 
+            dataSource={groupedItems[categoryId].items} 
+            bordered 
+            pagination={false} 
+          />
+        </div>
+      ))}
 
       {popupModal && (
         <Modal
