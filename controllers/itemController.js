@@ -14,10 +14,19 @@ const getItemController = async (req, res) => {
 // add items
 const addItemController = async (req, res) => {
   try {
-    const newItem = new itemModel(req.body);
-    await newItem.save();
-    res.status(201).send("Item Created Successfully!");
-  } catch (error) {
+    const { categoryId } = req.body;
+    let itemCategoryFound = await itemModel.findOne({ categoryId: categoryId });
+
+    if (itemCategoryFound) {
+      itemCategoryFound.item.push(req.body);
+      console.log("the category", itemCategoryFound)
+    // const newItem = new itemModel(req.body);
+    await itemCategoryFound.save();
+  
+  }
+  res.status(201).send("Item Created Successfully and in new category !");
+
+} catch (error) {
     res.status(400).send(error.message || "Error creating item");
     console.log(error);
   }

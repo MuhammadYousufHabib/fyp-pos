@@ -1,10 +1,21 @@
 const categoriesModel = require("../models/categoriesModel");
+const itemModel = require("../models/itemModel");
+
 
 const addCategoriesController = async (req, res) => {
   try {
-    const newItem = new categoriesModel(req.body);
+    const newCategory = new categoriesModel(req.body);
+    await newCategory.save();
+    console.log(newCategory);
+
+    const newItem = new itemModel({
+      categoryId: newCategory._id,
+      categoryName: newCategory.name,
+      item : [],
+     
+    }) 
     await newItem.save();
-    res.status(201).send("Category Created Successfully");
+    res.status(201).send("Category Created Successfully", newCategory);
   } catch (error) {
     res.status(400).send(error.message || "Error creating category");
     console.log(error);
