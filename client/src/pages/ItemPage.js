@@ -9,9 +9,9 @@ const ItemPage = () => {
   const dispatch = useDispatch();
   const [itemsData, setItemsData] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [groupedItems, setGroupedItems] = useState({}); // New state for grouped items
   const [popupModal, setPopupModal] = useState(false);
   const [editItem, setEditItem] = useState(null);
-  const [groupedItems, setGroupedItems] = useState({}); // For storing items grouped by category
 
   // Fetch categories dynamically
   const getCategories = async () => {
@@ -30,7 +30,7 @@ const ItemPage = () => {
       const { data } = await axios.get("/api/items/get-item");
       setItemsData(data);
       dispatch({ type: "HIDE_LOADING" });
-      
+
       // Group items by category
       groupItemsByCategory(data);
     } catch (error) {
@@ -39,18 +39,15 @@ const ItemPage = () => {
     }
   };
 
-  // Function to group items by category
+  // Group items by category
   const groupItemsByCategory = (items) => {
     const grouped = {};
     items.forEach((item) => {
-      const categoryId = item.category; // Assuming category is the field with the category ID
+      const categoryId = item.category; // Assuming category is the ID field
       if (!grouped[categoryId]) {
-        grouped[categoryId] = {
-          items: [],
-          categoryName: categories.find(cat => cat._id === categoryId)?.name // Get category name from categories array
-        };
+        grouped[categoryId] = [];
       }
-      grouped[categoryId].items.push(item);
+      grouped[categoryId].push(item);
     });
     setGroupedItems(grouped);
   };
@@ -153,20 +150,24 @@ const ItemPage = () => {
           Add Item
         </Button>
       </div>
-
-      {/* Render grouped items */}
-      {Object.keys(groupedItems).map((categoryId) => (
-        <div key={categoryId}>
-          <h2>{groupedItems[categoryId].categoryName}</h2>
-          <Table 
-            columns={columns} 
-            dataSource={groupedItems[categoryId].items} 
-            bordered 
-            pagination={false} 
-          />
-        </div>
-      ))}
-
+  
+      {/* Render items category-wise */}
+      {categories.map((category) => {
+        const itemsInCategory = groupedItems[category._id] || [];
+        
+        return itemsInCategory.length > 0 ? ( // Check if there are items in the category
+          <div key={category._id}>
+            <h2>{category.name}</h2>
+            <Table
+              columns={columns}
+              dataSource={itemsInCategory} // Use the grouped items
+              bordered
+              pagination={false} // Disable pagination for each category
+            />
+          </div>
+        ) : null; // Do not render anything if there are no items
+      })}
+  
       {popupModal && (
         <Modal
           title={`${editItem !== null ? "Edit Item" : "Add New Item"}`}
@@ -194,13 +195,13 @@ const ItemPage = () => {
             <Form.Item name="category" label="Category">
               <Select>
                 {categories.map((category) => (
-                  <Select.Option key={category._id} value={category.slug}>
+                  <Select.Option key={category._id} value={category._id}>
                     {category.name}
                   </Select.Option>
                 ))}
               </Select>
             </Form.Item>
-
+  
             <div className="d-flex justify-content-end">
               <Button type="primary" htmlType="submit">
                 SAVE
@@ -211,6 +212,7 @@ const ItemPage = () => {
       )}
     </DefaultLayout>
   );
+  
 };
 
 export default ItemPage;
