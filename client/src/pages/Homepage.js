@@ -3,9 +3,8 @@ import DefaultLayout from "./../components/DefaultLayout";
 import axios from "axios";
 import { Row, Col, Modal, Button, Form, Input } from "antd";
 import { useDispatch } from "react-redux";
-import ItemList from "../components/ItemList";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-
+import { Link } from "react-router-dom";
 
 const Homepage = () => {
   const [itemsData, setItemsData] = useState([]);
@@ -114,8 +113,9 @@ const Homepage = () => {
             }`}
             onClick={() => setSelectedCategory(category.name)}
           >
-            <h4>{category.name}</h4>
-            {/* <img
+<h4>
+  <Link to="/items">{category.name}</Link>
+</h4>            {/* <img
               src={category.image}
               alt={category.name}
               height="40"
@@ -127,15 +127,7 @@ const Homepage = () => {
         ))}
         <Button onClick={() => showModal()}>Add Category</Button>
       </div>
-      <Row>
-        {itemsData
-          .filter((i) => i.category === selectedCategory)
-          .map((item) => (
-            <Col xs={24} lg={6} md={12} sm={6} key={item.id}>
-              <ItemList item={item} />
-            </Col>
-          ))}
-      </Row>
+   
 
       <Modal
         title={currentCategory ? "Update Category" : "Add Category"}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DefaultLayout from "../components/DefaultLayout";
-import { useDispatch } from "react-redux";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux"; // Import useSelector for accessing cart from Redux
+import { DeleteOutlined, EditOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { Modal, Button, Table, Form, Input, Select, message } from "antd";
 
@@ -9,9 +9,12 @@ const ItemPage = () => {
   const dispatch = useDispatch();
   const [itemsData, setItemsData] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [groupedItems, setGroupedItems] = useState({}); // New state for grouped items
+  const [groupedItems, setGroupedItems] = useState({}); // Grouped items by category
   const [popupModal, setPopupModal] = useState(false);
   const [editItem, setEditItem] = useState(null);
+
+  // Cart state management using Redux (optional)
+  const cart = useSelector((state) => state.cart); // Access cart from Redux store
 
   // Fetch categories dynamically
   const getCategories = async () => {
@@ -74,40 +77,6 @@ const ItemPage = () => {
     }
   };
 
-  // Table columns
-  const columns = [
-    { title: "Name", dataIndex: "name" },
-    {
-      title: "Image",
-      dataIndex: "image",
-      render: (image, record) => (
-        <img src={image} alt={record.name} height="60" width="60" />
-      ),
-    },
-    { title: "Price", dataIndex: "price" },
-    {
-      title: "Actions",
-      dataIndex: "_id",
-      render: (id, record) => (
-        <div>
-          <EditOutlined
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              setEditItem(record);
-              setPopupModal(true);
-            }}
-          />
-          <DeleteOutlined
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              handleDelete(record);
-            }}
-          />
-        </div>
-      ),
-    },
-  ];
-
   // Handle form submit for adding/editing item
   const handleSubmit = async (value) => {
     if (editItem === null) {
@@ -142,20 +111,67 @@ const ItemPage = () => {
     }
   };
 
+  // Handle adding to cart
+  const handleAddToCart = (item) => {
+    dispatch({ type: "ADD_TO_CART", payload: { ...item, quantity: 1 } }); // Dispatch action to add to cart
+    message.success(`${item.name} added to cart`);
+  };
+
+  // Table columns with Add to Cart button
+  const columns = [
+    { title: "Name", dataIndex: "name" },
+    {
+      title: "Image",
+      dataIndex: "image",
+      render: (image, record) => (
+        <img src={image} alt={record.name} height="60" width="60" />
+      ),
+    },
+    { title: "Price", dataIndex: "price" },
+    {
+      title: "Actions",
+      dataIndex: "_id",
+      render: (id, record) => (
+        <div>
+          <Button
+            type="primary"
+            onClick={() => handleAddToCart(record)}
+            icon={<ShoppingCartOutlined />}
+            style={{ marginRight: 10 }}
+          >
+            Add to Cart
+          </Button>
+          <EditOutlined
+            style={{ cursor: "pointer", marginRight: 10 }}
+            onClick={() => {
+              setEditItem(record);
+              setPopupModal(true);
+            }}
+          />
+          <DeleteOutlined
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              handleDelete(record);
+            }}
+          />
+        </div>
+      ),
+    },
+  ];
+
   return (
     <DefaultLayout>
       <div className="d-flex justify-content-between">
-        <h1>Item List</h1>
+        <h1>Products </h1>
         <Button type="primary" onClick={() => setPopupModal(true)}>
           Add Item
         </Button>
       </div>
-  
+
       {/* Render items category-wise */}
       {categories.map((category) => {
         const itemsInCategory = groupedItems[category._id] || [];
-        
-        return itemsInCategory.length > 0 ? ( // Check if there are items in the category
+        return itemsInCategory.length > 0 ? (
           <div key={category._id}>
             <h2>{category.name}</h2>
             <Table
@@ -165,9 +181,10 @@ const ItemPage = () => {
               pagination={false} // Disable pagination for each category
             />
           </div>
-        ) : null; // Do not render anything if there are no items
+        ) : null;
       })}
-  
+
+      {/* Modal for Add/Edit Item */}
       {popupModal && (
         <Modal
           title={`${editItem !== null ? "Edit Item" : "Add New Item"}`}
@@ -201,7 +218,7 @@ const ItemPage = () => {
                 ))}
               </Select>
             </Form.Item>
-  
+
             <div className="d-flex justify-content-end">
               <Button type="primary" htmlType="submit">
                 SAVE
@@ -212,7 +229,6 @@ const ItemPage = () => {
       )}
     </DefaultLayout>
   );
-  
 };
 
 export default ItemPage;
