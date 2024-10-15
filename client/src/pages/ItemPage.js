@@ -137,7 +137,6 @@ const ItemPage = () => {
           <Button
             type="primary"
             onClick={() => handleAddToCart(record)}
-            icon={<ShoppingCartOutlined />}
             style={{ marginRight: 10 }}
           >
             Add to Cart
