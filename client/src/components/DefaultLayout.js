@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   MenuUnfoldOutlined,
+  CameraOutlined,
   MenuFoldOutlined,
   UserOutlined,
   LogoutOutlined,
@@ -63,16 +64,19 @@ const DefaultLayout = ({ children }) => {
           defaultSelectedKeys={window.location.pathname}
         >
           <Menu.Item key="/" icon={<HomeOutlined />}>
-            <Link to="/">Home</Link>
+            <Link to="/">Inventory</Link>
           </Menu.Item>
           <Menu.Item key="/bills" icon={<CopyOutlined />}>
             <Link to="/bills">Bills</Link>
           </Menu.Item>
           <Menu.Item key="/items" icon={<UnorderedListOutlined />}>
-            <Link to="/items">Items</Link>
+            <Link to="/items">Products</Link>
           </Menu.Item>
           <Menu.Item key="/customers" icon={<UserOutlined />}>
             <Link to="/customers">Cutomers</Link>
+          </Menu.Item>
+          <Menu.Item key="/camera" icon={<CameraOutlined />}>
+            <Link to="/camera"> Capture</Link>
           </Menu.Item>
           <Menu.Item
             key="/logout"

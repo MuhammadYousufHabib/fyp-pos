@@ -85,7 +85,6 @@ const BillsPage = () => {
           }}
           footer={false}
         >
-          {/* ============ invoice modal start ==============  */}
           <div id="invoice-POS" ref={componentRef}>
             <center id="top">
               <div className="logo" />
@@ -93,9 +92,8 @@ const BillsPage = () => {
                 <h2>Techinfo YT POS</h2>
                 <p> Contact : 123456 | Mumbai Maharashtra</p>
               </div>
-              {/*End Info*/}
+
             </center>
-            {/*End InvoiceTop*/}
             <div id="mid">
               <div className="mt-2">
                 <p>
