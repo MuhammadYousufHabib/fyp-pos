@@ -10,6 +10,7 @@ import CutomerPage from "./pages/CutomerPage";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import axios from "axios";
+import CameraCapture from "./pages/CameraCapture";
 
 function App() {
   const dispatch = useDispatch();
@@ -56,6 +57,7 @@ function App() {
           <Route path="/" element={<Homepage />} />
           <Route path="/items" element={<ItemPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/camera" element={<CameraCapture />} />
           <Route path="/bills" element={<BillsPage />} />
           <Route path="/customers" element={<CutomerPage />} />
 
