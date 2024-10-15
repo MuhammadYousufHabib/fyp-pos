@@ -45,13 +45,16 @@ const Homepage = () => {
   // Handle category addition
   const handleAddCategory = async (values) => {
     try {
+      console.log("the values",values);
       const newCategory = {
         name: values.name,
         // description: values.description,
         // slug: values.slug,
         // image: values.imageUrl,
       };
+      console.log("the new category",newCategory);
       const { data } = await axios.post("/api/categories/add-categories", newCategory);
+      console.log("the data",data);
       setCategories((prev) => [...prev, data]); // Update state with new category
       setIsModalVisible(false);
     } catch (error) {

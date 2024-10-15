@@ -93,7 +93,7 @@ const CartPage = () => {
         totalAmount: Number(
           Number(subTotal) + Number(((subTotal / 100) * 10).toFixed(2))
         ),
-        userId: JSON.parse(localStorage.getItem("auth"))._id,
+        // userId: JSON.parse(localStorage.getItem("auth"))._id,
       };
       // console.log(newObject);
       await axios.post("/api/bills/add-bills", newObject);
@@ -101,7 +101,7 @@ const CartPage = () => {
       navigate("/bills");
     } catch (error) {
       message.error("Something went wrong");
-      console.log(error);
+      console.log(error.data);
     }
   };
   return (

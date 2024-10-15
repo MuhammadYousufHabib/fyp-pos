@@ -79,6 +79,7 @@ const ItemPage = () => {
 
   // Handle form submit for adding/editing item
   const handleSubmit = async (value) => {
+    console.log("the value is this",value)
     if (editItem === null) {
       try {
         dispatch({ type: "SHOW_LOADING" });
@@ -200,16 +201,19 @@ const ItemPage = () => {
             initialValues={editItem}
             onFinish={handleSubmit}
           >
-            <Form.Item name="name" label="Name">
+            <Form.Item name="ItemName" label="Name">
               <Input />
             </Form.Item>
             <Form.Item name="price" label="Price">
               <Input />
             </Form.Item>
-            <Form.Item name="image" label="Image URL">
+            <Form.Item name="count" label="Item Count">
               <Input />
             </Form.Item>
-            <Form.Item name="category" label="Category">
+            {/* <Form.Item name="image" label="Image URL">
+              <Input />
+            </Form.Item> */}
+            <Form.Item name="categoryId" label="Category">
               <Select>
                 {categories.map((category) => (
                   <Select.Option key={category._id} value={category._id}>
