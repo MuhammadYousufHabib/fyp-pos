@@ -21,6 +21,7 @@ const ItemPage = () => {
     try {
       const { data } = await axios.get("/api/categories/get-categories");
       setCategories(data);
+      console.log("Categories",data)
     } catch (error) {
       console.log("Error fetching categories:", error);
     }
@@ -33,7 +34,7 @@ const ItemPage = () => {
       const { data } = await axios.get("/api/items/get-item");
       setItemsData(data);
       dispatch({ type: "HIDE_LOADING" });
-
+      console.log("items",data)
       // Group items by category
       groupItemsByCategory(data);
     } catch (error) {
@@ -115,20 +116,21 @@ const ItemPage = () => {
   // Handle adding to cart
   const handleAddToCart = (item) => {
     dispatch({ type: "ADD_TO_CART", payload: { ...item, quantity: 1 } }); // Dispatch action to add to cart
-    message.success(`${item.name} added to cart`);
+    message.success(`${item.ItemName} added to cart`);
   };
 
   // Table columns with Add to Cart button
   const columns = [
-    { title: "Name", dataIndex: "name" },
-    {
-      title: "Image",
-      dataIndex: "image",
-      render: (image, record) => (
-        <img src={image} alt={record.name} height="60" width="60" />
-      ),
-    },
+    { title: "Name", dataIndex: "ItemName" },
+    // {
+    //   title: "Image",
+    //   dataIndex: "image",
+    //   render: (image, record) => (
+    //     <img src={image} alt={record.name} height="60" width="60" />
+    //   ),
+    // },
     { title: "Price", dataIndex: "price" },
+    { title: "Count", dataIndex: "count" },
     {
       title: "Actions",
       dataIndex: "_id",
@@ -170,20 +172,20 @@ const ItemPage = () => {
       </div>
 
       {/* Render items category-wise */}
-      {categories.map((category) => {
-        const itemsInCategory = groupedItems[category._id] || [];
-        return itemsInCategory.length > 0 ? (
-          <div key={category._id}>
-            <h2>{category.name}</h2>
+      {/* {itemsData.map((item) => {
+        // const itemsInCategory = groupedItems[category._id] || [];
+        return ( */}
+          <div >
+            {/* <h2>{item.name}</h2> */}
             <Table
               columns={columns}
-              dataSource={itemsInCategory} // Use the grouped items
+              dataSource={itemsData} // Use the grouped items
               bordered
               pagination={false} // Disable pagination for each category
             />
           </div>
-        ) : null;
-      })}
+        {/* ) */}
+      {/* })} */}
 
       {/* Modal for Add/Edit Item */}
       {popupModal && (
