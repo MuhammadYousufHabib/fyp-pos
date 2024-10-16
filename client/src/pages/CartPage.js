@@ -31,14 +31,8 @@ const CartPage = () => {
     }
   };
   const columns = [
-    { title: "Name", dataIndex: "name" },
-    {
-      title: "Image",
-      dataIndex: "image",
-      render: (image, record) => (
-        <img src={image} alt={record.name} height="60" width="60" />
-      ),
-    },
+    { title: "Name", dataIndex: "ItemName" },
+   
     { title: "Price", dataIndex: "price" },
     {
       title: "Quantity",
@@ -95,9 +89,18 @@ const CartPage = () => {
         ),
         // userId: JSON.parse(localStorage.getItem("auth"))._id,
       };
+      console.log("the cartItems", cartItems)
+
+      const responseInventoryUpdate = await axios.put("/api/items/edit-count", cartItems )
+   
+      // console.log("the response of responseInventoryUpdate", responseInventoryUpdate)
       // console.log(newObject);
       await axios.post("/api/bills/add-bills", newObject);
+      dispatch({
+        type: "Empty_CART",
+      });
       message.success("Bill Generated");
+
       navigate("/bills");
     } catch (error) {
       message.error("Something went wrong");

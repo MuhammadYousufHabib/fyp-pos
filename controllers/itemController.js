@@ -54,6 +54,55 @@ const editItemController = async (req, res) => {
   }
 };
 
+// update item inventory 
+const editItemInventoryController = async (req, res) =>{
+  try{
+    
+    // const { ItemName, quantity } = req.body;
+    const itemsArray = req.body
+    if (!Array.isArray(itemsArray) || itemsArray.length === 0) {
+      return res.status(400).json({ message: 'Items array is required' });
+    }
+
+    const updatePromises = itemsArray.map(async (item) => {
+      const { ItemName, quantity } = item;
+
+      if (!ItemName || !quantity) {
+        throw new Error('ItemName and quantity are required');
+      }
+
+      const foundItem = await itemModel.findOne({ ItemName });
+
+      if (!foundItem) {
+        throw new Error(`Item '${ItemName}' not found`);
+      }
+
+      // if (foundItem.count < quantity) {
+      //   throw new Error(`Insufficient stock for '${ItemName}'`);
+      // }
+
+      return await itemModel.findOneAndUpdate(
+        { ItemName },
+        { $inc: { count: -quantity } },
+        { new: true }
+      );
+    });
+
+    // Wait for all updates to complete
+    const updatedItems = await Promise.all(updatePromises);
+    res.status(200).json({
+      message: 'Quantities reduced successfully',
+      items: updatedItems,
+    });
+    
+
+  }
+  catch(error){
+    console.error('Error reducing quantity:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
 // delete item
 const deleteItemController = async (req, res) => {
   try {
@@ -72,4 +121,5 @@ module.exports = {
   addItemController,
   editItemController,
   deleteItemController,
+  editItemInventoryController
 };

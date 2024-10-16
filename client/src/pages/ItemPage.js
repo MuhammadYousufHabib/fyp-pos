@@ -115,7 +115,15 @@ const ItemPage = () => {
 
   // Handle adding to cart
   const handleAddToCart = (item) => {
-    dispatch({ type: "ADD_TO_CART", payload: { ...item, quantity: 1 } }); // Dispatch action to add to cart
+
+    // dispatch({ type: "ADD_TO_CART", payload: { ...item, quantity: 1 } }); // Dispatch action to add to cart
+    dispatch({ type: "ADD_TO_CART", payload: { 
+      ItemName : item.ItemName, 
+      quantity: 1,
+      categoryId: item.categoryId,
+      price: item.price,
+      _id: item._id 
+    } });
     message.success(`${item.ItemName} added to cart`);
   };
 

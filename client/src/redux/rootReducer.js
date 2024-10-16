@@ -52,6 +52,11 @@ export const rootReducer = (state = intialState, action) => {
           (item) => item._id !== action.payload._id
         ),
       };
+      case "Empty_CART":
+        return {
+          ...state,
+          cartItems: []
+        };
 
     case "USER_LOGIN": {
       console.log("here its " + action.payload.name, action.payload.isAdmin);
