@@ -38,23 +38,23 @@ const Homepage = () => {
   };
   // Fetch categories data
   useEffect(() => {
-   
+
     getCategories();
   }, []);
 
   // Handle category addition
   const handleAddCategory = async (values) => {
     try {
-      console.log("the values",values);
+      console.log("the values", values);
       const newCategory = {
         name: values.name,
         // description: values.description,
         // slug: values.slug,
         // image: values.imageUrl,
       };
-      console.log("the new category",newCategory);
+      console.log("the new category", newCategory);
       const { data } = await axios.post("/api/categories/add-categories", newCategory);
-      console.log("the data",data);
+      console.log("the data", data);
       setCategories((prev) => [...prev, data]); // Update state with new category
       setIsModalVisible(false);
     } catch (error) {
@@ -62,7 +62,7 @@ const Homepage = () => {
     }
 
     getCategories()
-    
+
     setIsModalVisible(false);
 
   };
@@ -110,27 +110,26 @@ const Homepage = () => {
       <div className="d-flex">
         {categories.map((category) => (
           <div
-            key={category._id} 
-            className={`d-flex  category ${
-              selectedCategory === category.name && "category-active"
-            }`}
+            key={category._id}  
+            className={`d-flex  category ${selectedCategory === category.name && "category-active"
+              }`}
             onClick={() => setSelectedCategory(category.name)}
           >
-<h4>
-  <Link to="/items">{category.name}</Link>
-</h4>            {/* <img
+            <h4>
+              <Link to="/items">{category.name}</Link>
+            </h4>            {/* <img
               src={category.image}
               alt={category.name}
               height="40"
               width="60"
             /> */}
-            <DeleteOutlined onClick={() => handleDeleteCategory(category._id)}/>
-              <EditOutlined onClick={() => showModal(category)}/>
-            </div>
+            <DeleteOutlined onClick={() => handleDeleteCategory(category._id)} />
+            <EditOutlined onClick={() => showModal(category)} />
+          </div>
         ))}
         <Button onClick={() => showModal()}>Add Category</Button>
       </div>
-   
+
 
       <Modal
         title={currentCategory ? "Update Category" : "Add Category"}
@@ -139,7 +138,7 @@ const Homepage = () => {
         footer={null}
       >
         <Form
-          initialValues={currentCategory || { name: ''}}
+          initialValues={currentCategory || { name: '' }}
           onFinish={currentCategory ? handleUpdateCategory : handleAddCategory}
         >
           <Form.Item name="name" label="Name" rules={[{ required: true }]}>

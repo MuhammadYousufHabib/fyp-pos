@@ -49,6 +49,7 @@ body {
   flex-direction: column;
   justify-content: center;
   height: 100vh;
+  background: -webkit-linear-gradient(left, #003366, #004080, #0059b3, #0073e6);
 }
 
 .register input {
@@ -56,11 +57,10 @@ body {
 }
 
 .regsiter-form {
-  background-color: rgba(98, 197, 251, 0.463);
   padding: 20px;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
-    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
-    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  border-radius: 20px;
+  background: aliceblue;
+  box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.1);
 }
 
 .regsiter-form h1 {
@@ -70,8 +70,32 @@ body {
   padding: 10px;
 }
 
-.regsiter-form h3 {
-  color: rgb(4, 4, 113);
-  text-align: center;
+
+.register input{
+  padding: 8px 8px 8px 14px;
+  border-radius: 15px;
+  
+}
+.register input:hover,.register  input:focus{
+  border-color: black;
+  box-shadow: none;
 }
 
+
+.register button.ant-btn{
+  background: -webkit-linear-gradient(left, #003366, #004080, #0059b3, #0073e6);;
+}
+.register .d-flex.justify-content-between{align-items: center;}
+
+.login--register-heading{ color: #003366;font-size: 35px; font-weight: 600; text-align: center; transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);}
+
+.register .not-a-user{flex-direction: column; gap: 22px;}
+.register .not-a-user p{order: 2; font-size: 15px;}
+.register .not-a-user p a{font-size: 13px; margin-left: 5px; color: #004080;}
+.register .not-a-user p a:hover{text-decoration: underline;}
+.register .not-a-user button{width: 100%; padding: 12px; border-radius: 10px; height: auto;}
+
+@media screen and (max-width:767px) {
+  .regsiter-form{max-width: 350px; width: 100%; margin: auto; border-radius: 20px;}
+  .regsiter-form input{width: 300px !important;}
+}

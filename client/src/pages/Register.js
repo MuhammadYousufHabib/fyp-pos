@@ -36,8 +36,9 @@ const Register = () => {
     <>
       <div className="register">
         <div className="regsiter-form">
-          <h1>POS APP</h1>
-          <h3>Register Page</h3>
+        
+          {/* <h1>POS APP</h1> */}
+          <h3 className="login--register-heading">Register Page</h3>
           <Form layout="vertical" onFinish={handleSubmit}>
             <Form.Item name="name" label="Name">
               <Input />
@@ -49,9 +50,9 @@ const Register = () => {
               <Input type="password" />
             </Form.Item>
 
-            <div className="d-flex justify-content-between">
+            <div className="d-flex justify-content-between not-a-user">
               <p>
-                ALready Register Please
+                Already Registered?
                 <Link to="/login"> Login Here !</Link>
               </p>
               <Button type="primary" htmlType="submit">

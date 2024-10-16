@@ -42,8 +42,8 @@ const Login = () => {
     <>
       <div className="register">
         <div className="regsiter-form">
-          <h1>POS APP</h1>
-          <h3>Login Page</h3>
+          {/* <h1>POS APP</h1> */}
+          <h3 className="login--register-heading">Login Page</h3>
           <Form layout="vertical" onFinish={handleSubmit}>
             <Form.Item name="email" label="Email">
               <Input />
@@ -52,9 +52,9 @@ const Login = () => {
               <Input type="password" />
             </Form.Item>
 
-            <div className="d-flex justify-content-between">
+            <div className="d-flex justify-content-between not-a-user">
               <p>
-                not a user Please
+                Not a user?
                 <Link to="/register"> Register Here !</Link>
               </p>
               <Button type="primary" htmlType="submit">
