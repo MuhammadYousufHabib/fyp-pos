@@ -4,13 +4,13 @@ const itemModel = require("../models/itemModel");
 
 const addCategoriesController = async (req, res) => {
   try {
-    console.log(req.body);
+    console.log("the categories",req.body);
     const newCategory = new categoriesModel(req.body);
     await newCategory.save();
     console.log(newCategory);
 
   
-    res.status(201).send("Category Created Successfully", newCategory);
+    res.status(201).json({ message: "Category Created Successfully", category: newCategory });
   } catch (error) {
     res.status(400).send(error.message || "Error creating category");
     console.log(error);
