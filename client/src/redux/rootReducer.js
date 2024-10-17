@@ -18,24 +18,26 @@ export const rootReducer = (state = intialState, action) => {
         ...state,
         loading: false,
       };
-    case "ADD_TO_CART":
-      const item = action.payload;
-      const existItem = state.cartItems.find((x) => x._id === item._id);
-
-      if (existItem) {
-        // Update quantity if item exists
-        return {
-          ...state,
-          cartItems: state.cartItems.map((x) =>
-            x._id === existItem._id ? { ...x, quantity: x.quantity + 1 } : x
-          ),
-        };
-      } else {
-        return {
-          ...state,
-          cartItems: [...state.cartItems, item],
-        };
-      }
+      case "ADD_TO_CART":
+        const item = action.payload;
+        const existItem = state.cartItems.find((x) => x._id === item._id);
+      
+        if (existItem) {
+          return {
+            ...state,
+            cartItems: state.cartItems.map((x) =>
+              x._id === existItem._id
+                ? { ...x, quantity: x.quantity + item.quantity } // Add the quantity from the payload
+                : x
+            ),
+          };
+        } else {
+          return {
+            ...state,
+            cartItems: [...state.cartItems, item], // Add the item with its current quantity
+          };
+        }
+      
     case "UPDATE_CART":
       return {
         ...state,
