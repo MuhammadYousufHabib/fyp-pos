@@ -2,14 +2,18 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Button, Row, Col, Card, Typography, Spin } from "antd";
 import { useDispatch } from 'react-redux'; 
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 const { Title, Text } = Typography;
 
 const CameraCapture = () => {
+  const navigate = useNavigate(); // Initialize navigate
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  
   const [capturing, setCapturing] = useState(false);
   const [frames, setFrames] = useState([]);
   const [itemNames, setitemNames] = useState([])
+
   const dispatch = useDispatch(); 
 
   const startCamera = async () => {
@@ -58,7 +62,7 @@ const CameraCapture = () => {
         const detectedNames = result.map((e) => e.name); 
 
         setitemNames((prevItemNames) => {
-          return [...prevItemNames, ...detectedNames]; // Simply concatenate the new names
+          return [...prevItemNames, ...detectedNames]; 
       });
 
           setFrames((prevFrames) => {
@@ -146,11 +150,13 @@ const CameraCapture = () => {
       } catch (error) {
         console.error("Error fetching items:", error);
       }
+
     };
     
   
 
-    await getAllItems(); // Call the function to fetch items
+    await getAllItems();
+    navigate("/cart");
 };
 
 
@@ -159,26 +165,24 @@ const CameraCapture = () => {
       const stopCaptureInterval = startCapturing();
       return stopCaptureInterval;
     }
+    
   }, [capturing]);
   return (
     <div style={{ padding: "20px" }}>
-      <Title level={2} style={{ textAlign: "center" }}>Camera Capture</Title>
 
       <div style={{ position: "fixed", top: "20px", right: "20px", zIndex: 1000 }}>
         <Row gutter={[16, 16]} justify="bottom">
           {!capturing ? (
             <Button type="primary" onClick={() => setCapturing(true)} size="large">
-              Start Capturing
-            </Button>
+Scan            </Button>
           ) : (
-            <Button type="danger" onClick={stopCapturing} size="large">
-              Stop Capturing
-            </Button>
+            <Button type="secondary" onClick={stopCapturing} size="large">
+Generate bill            </Button>
           )}
         </Row>
       </div>
 
-      <div style={{ position: "fixed", bottom: "20px", left: "20px", zIndex: 1000 }}>
+      <div style={{ position: "fixed", top: "20px", right: "450px", zIndex: 1000 }}>
         <video
           ref={videoRef}
           width="440"

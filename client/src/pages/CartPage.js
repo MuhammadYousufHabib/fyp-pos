@@ -9,20 +9,23 @@ import {
   MinusCircleOutlined,
 } from "@ant-design/icons";
 import { Table, Button, Modal, message, Form, Input, Select } from "antd";
+
 const CartPage = () => {
   const [subTotal, setSubTotal] = useState(0);
   const [billPopup, setBillPopup] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { cartItems } = useSelector((state) => state.rootReducer);
-  //handle increament
-  const handleIncreament = (record) => {
+  
+  const handleIncrement = (record) => {
     dispatch({
       type: "UPDATE_CART",
       payload: { ...record, quantity: record.quantity + 1 },
     });
   };
-  const handleDecreament = (record) => {
+
+  // Handle decrement
+  const handleDecrement = (record) => {
     if (record.quantity !== 1) {
       dispatch({
         type: "UPDATE_CART",
@@ -30,9 +33,9 @@ const CartPage = () => {
       });
     }
   };
+
   const columns = [
     { title: "Name", dataIndex: "ItemName" },
-   
     { title: "Price", dataIndex: "price" },
     {
       title: "Quantity",
@@ -42,13 +45,13 @@ const CartPage = () => {
           <PlusCircleOutlined
             className="mx-3"
             style={{ cursor: "pointer" }}
-            onClick={() => handleIncreament(record)}
+            onClick={() => handleIncrement(record)}
           />
           <b>{record.quantity}</b>
           <MinusCircleOutlined
             className="mx-3"
             style={{ cursor: "pointer" }}
-            onClick={() => handleDecreament(record)}
+            onClick={() => handleDecrement(record)}
           />
         </div>
       ),
@@ -72,29 +75,31 @@ const CartPage = () => {
 
   useEffect(() => {
     let temp = 0;
-    cartItems.forEach((item) => (temp = temp + item.price * item.quantity));
+    cartItems.forEach((item) => (temp += item.price * item.quantity));
     setSubTotal(temp);
   }, [cartItems]);
 
-  //handleSubmit
+  // Handle submit
   const handleSubmit = async (value) => {
     try {
       const newObject = {
-        ...value,
+        customerName: "-",  
+        customerNumber: 0, 
+        paymentMode: value.paymentMode || "cash", 
         cartItems,
         subTotal,
         tax: Number(((subTotal / 100) * 10).toFixed(2)),
         totalAmount: Number(
           Number(subTotal) + Number(((subTotal / 100) * 10).toFixed(2))
         ),
-        // userId: JSON.parse(localStorage.getItem("auth"))._id,
       };
-      console.log("the cartItems", cartItems)
 
-      const responseInventoryUpdate = await axios.put("/api/items/edit-count", cartItems )
-   
-      // console.log("the response of responseInventoryUpdate", responseInventoryUpdate)
-      // console.log(newObject);
+      console.log("the cartItems", cartItems);
+
+      // Update inventory
+      await axios.put("/api/items/edit-count", cartItems);
+
+      // Create bill
       await axios.post("/api/bills/add-bills", newObject);
       dispatch({
         type: "Empty_CART",
@@ -107,6 +112,7 @@ const CartPage = () => {
       console.log(error.data);
     }
   };
+
   return (
     <DefaultLayout>
       <h1>Cart Page</h1>
@@ -114,7 +120,7 @@ const CartPage = () => {
       <div className="d-flex flex-column align-items-end">
         <hr />
         <h3>
-          SUBT TOTAL : $ <b> {subTotal}</b> /-{" "}
+          SUB TOTAL: $ <b>{subTotal}</b> /-{" "}
         </h3>
         <Button type="primary" onClick={() => setBillPopup(true)}>
           Create Invoice
@@ -127,22 +133,15 @@ const CartPage = () => {
         footer={false}
       >
         <Form layout="vertical" onFinish={handleSubmit}>
-          <Form.Item name="customerName" label="Customer Name">
-            <Input />
-          </Form.Item>
-          <Form.Item name="customerNumber" label="Contact Number">
-            <Input />
-          </Form.Item>
-
-          <Form.Item name="paymentMode" label="Payment Method">
-            <Select>
-              <Select.Option value="cash">Cash</Select.Option>
-              <Select.Option value="card">Card</Select.Option>
+          <Form.Item name="paymentMode" label="Payment Method" required>
+            <Select placeholder="Select Payment Method">
+              <Select.Option value="EasyPaise">EasyPaise</Select.Option>
+              <Select.Option value="Jazzcash">Jazzcash</Select.Option>
             </Select>
           </Form.Item>
           <div className="bill-it">
             <h5>
-              Sub Total : <b>{subTotal}</b>
+              Sub Total: <b>{subTotal}</b>
             </h5>
             <h4>
               TAX

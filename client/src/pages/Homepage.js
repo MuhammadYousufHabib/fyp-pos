@@ -44,6 +44,7 @@ const Homepage = () => {
 
   // Handle category addition
   const handleAddCategory = async (values) => {
+    
     try {
       console.log("the values",values);
       const newCategory = {

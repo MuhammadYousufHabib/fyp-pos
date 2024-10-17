@@ -54,10 +54,10 @@ function App() {
     <>
       {isLogin === true && role === "user" ? (
         <Routes>
-          <Route path="/" element={<Homepage />} />
+          <Route path="/inventory" element={<Homepage />} />
           <Route path="/items" element={<ItemPage />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/camera" element={<CameraCapture />} />
+          <Route path="/" element={<CameraCapture />} />
           <Route path="/bills" element={<BillsPage />} />
           <Route path="/customers" element={<CutomerPage />} />
 

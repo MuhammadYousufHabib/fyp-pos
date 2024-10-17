@@ -64,7 +64,7 @@ const DefaultLayout = ({ children }) => {
           defaultSelectedKeys={window.location.pathname}
         >
           <Menu.Item key="/" icon={<HomeOutlined />}>
-            <Link to="/">Inventory</Link>
+            <Link to="/inventory">Inventory</Link>
           </Menu.Item>
           <Menu.Item key="/bills" icon={<CopyOutlined />}>
             <Link to="/bills">Bills</Link>

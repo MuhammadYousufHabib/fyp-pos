@@ -87,19 +87,15 @@ const BillsPage = () => {
         >
           <div id="invoice-POS" ref={componentRef}>
             <center id="top">
-              <div className="logo" />
-              <div className="info">
-                <h2>Techinfo YT POS</h2>
-                <p> Contact : 123456 | Mumbai Maharashtra</p>
+              <div className="w-fit">
+                <h2>SuperStoreSight</h2>
               </div>
 
             </center>
             <div id="mid">
               <div className="mt-2">
                 <p>
-                  Customer Name : <b>{selectedBill.customerName}</b>
-                  <br />
-                  Phone No : <b>{selectedBill.customerNumber}</b>
+                 
                   <br />
                   Date : <b>{selectedBill.date.toString().substring(0, 10)}</b>
                   <br />
@@ -107,7 +103,6 @@ const BillsPage = () => {
                 <hr style={{ margin: "5px" }} />
               </div>
             </div>
-            {/*End Invoice Mid*/}
             <div id="bot">
               <div id="table">
                 <table>
@@ -172,25 +167,21 @@ const BillsPage = () => {
                   </tbody>
                 </table>
               </div>
-              {/*End Table*/}
               <div id="legalcopy">
                 <p className="legal">
                   <strong>Thank you for your order!</strong> 10% GST application
                   on total amount.Please note that this is non refundable amount
                   for any assistance please write email
-                  <b> help@mydomain.com</b>
+                  <b> help@SuperStoreSight.com</b>
                 </p>
               </div>
             </div>
-            {/*End InvoiceBot*/}
           </div>
-          {/*End Invoice*/}
           <div className="d-flex justify-content-end mt-3">
             <Button type="primary" onClick={handlePrint}>
               Print
             </Button>
           </div>
-          {/* ============ invoice modal ends ==============  */}
         </Modal>
       )}
     </DefaultLayout>
