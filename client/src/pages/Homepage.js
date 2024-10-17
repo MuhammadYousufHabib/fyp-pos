@@ -42,11 +42,18 @@ const Homepage = () => {
     getCategories();
   }, []);
 
-  // Handle category addition
   const handleAddCategory = async (values) => {
     
     try {
       console.log("the values",values);
+
+      const categoryExists = categories.some(category => category.name.toLowerCase() === values.name.toLowerCase());
+    
+      if (categoryExists) {
+        alert("Category already exists!");
+        return; // Return early to prevent adding a duplicate category
+      }
+
       const newCategory = {
         name: values.name,
         // description: values.description,
@@ -70,6 +77,7 @@ const Homepage = () => {
 
   const handleDeleteCategory = async (id) => {
     try {
+      
       await axios.post(`/api/categories/delete-categories/${id}`);
       setCategories((prev) => prev.filter((cat) => cat._id !== id)); // Update state to remove deleted category
       if (selectedCategory === id) {
@@ -83,6 +91,16 @@ const Homepage = () => {
   // Handle category update
   const handleUpdateCategory = async (values) => {
     try {
+
+      const categoryExists = categories.some(
+        (cat) => cat.name.toLowerCase() === values.name.toLowerCase() && cat._id !== currentCategory._id
+      );
+  
+      if (categoryExists) {
+        alert("Category name already exists!");
+        return; // Prevent updating if a duplicate is found
+      }
+
       const updatedCategory = {
         name: values.name,
         // description: values.description,
