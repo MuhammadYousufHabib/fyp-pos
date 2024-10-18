@@ -40,11 +40,6 @@ const BillsPage = () => {
   //able data
   const columns = [
     { title: "ID ", dataIndex: "_id" },
-    {
-      title: "Cutomer Name",
-      dataIndex: "customerName",
-    },
-    { title: "Contact No", dataIndex: "customerNumber" },
     { title: "Subtotal", dataIndex: "subTotal" },
     { title: "Tax", dataIndex: "tax" },
     { title: "Total Amount", dataIndex: "totalAmount" },

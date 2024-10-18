@@ -126,7 +126,6 @@ const ItemPage = () => {
     } });
     message.success(`${item.ItemName} added to cart`);
   };
-
   // Table columns with Add to Cart button
   const columns = [
     { title: "Name", dataIndex: "ItemName" },
