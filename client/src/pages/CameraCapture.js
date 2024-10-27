@@ -1,231 +1,216 @@
-import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
-import { Button, Row, Col, Card, Typography, Spin } from "antd";
-import { useDispatch } from 'react-redux'; 
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-const { Title, Text } = Typography;
+  import React, { useEffect, useRef, useState } from "react";
+  import { Button, Row, Col, Typography, Spin } from "antd";
+  import axios from "axios";
+  import { useNavigate } from 'react-router-dom'; 
+  import { useDispatch } from 'react-redux'; 
+  const { Title } = Typography;
 
-const CameraCapture = () => {
-  const navigate = useNavigate(); // Initialize navigate
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  
-  const [capturing, setCapturing] = useState(false);
-  const [frames, setFrames] = useState([]);
-  const [itemNames, setitemNames] = useState([])
+  const CameraCapture = () => {
+    const navigate = useNavigate(); 
+    const dispatch=useDispatch();
+    const videoRef = useRef(null);
+    const canvasRef = useRef(null);
+    const [loading, setLoading] = useState(true);
+    const [capturedImages, setCapturedImages] = useState([]);
+    const [apiResults, setApiResults] = useState([]);
+    const [isCapturing, setIsCapturing] = useState(false);
+    const [intervalId, setIntervalId] = useState(null);
+    const [itemNames, setitemNames] = useState([])
+    let counter = 0; 
 
-  const dispatch = useDispatch(); 
-
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      videoRef.current.srcObject = stream;
-      videoRef.current.play();
-    } catch (error) {
-      console.error("Error accessing the camera:", error);
-    }
-  };
-
-  const captureImage = () => {
-    const context = canvasRef.current.getContext("2d");
-    context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-    const imageUrl = canvasRef.current.toDataURL("image/png");
-
-    const frame = { imageUrl, detection: "Processing..." };
-
-    setFrames((prevFrames) => {
-      const updatedFrames = [...prevFrames, frame];
-      detectObjects(imageUrl, updatedFrames.length - 1);
-      return updatedFrames;
-    });
-  };
-
-  const detectObjects = async (image, index) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/predict",
-        {
-          image: image.split(",")[1], 
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-  
-      const result = response.data;
-      console.log("api gives: ",result)
-  
-      if (Array.isArray(result) && result.length > 0) {
-        const detectedNames = result.map((e) => e.name); 
-
-        setitemNames((prevItemNames) => {
-          return [...prevItemNames, ...detectedNames]; 
-      });
-
-          setFrames((prevFrames) => {
-          const updatedFrames = [...prevFrames];
-          if (updatedFrames[index]) {
-            updatedFrames[index] = { ...updatedFrames[index], detection: detectedNames }; 
+    useEffect(() => {
+      const initCamera = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
           }
-          return updatedFrames;
-        });
-      } else {
-        console.error("Result is not an array or is empty:", result);
-  
-        setFrames((prevFrames) => {
-          const updatedFrames = [...prevFrames];
-          if (updatedFrames[index]) {
-            updatedFrames[index] = { ...updatedFrames[index], detection: "No detections" };
-          }
-          return updatedFrames;
-        });
-      }
-    } catch (error) {
-      console.error("Error detecting objects:", error);
-  
-      setFrames((prevFrames) => {
-        const updatedFrames = [...prevFrames];
-        if (updatedFrames[index]) {
-          updatedFrames[index] = { ...updatedFrames[index], detection: "Error occurred" };
+          setLoading(false);
+        } catch (err) {
+          console.error("Error accessing the camera: ", err);
         }
-        return updatedFrames;
-      });
-    }
-  };
-  
+      };
 
-  const startCapturing = () => {
-    setCapturing(true);
-    startCamera();
-    const intervalId = setInterval(captureImage, 2000); // Capture every second
-    return () => clearInterval(intervalId); // Clear interval on stop/unmount
-  };
-  
+      initCamera();
 
-  const stopCapturing = async () => {
-    
-    setCapturing(false);
-    const stream = videoRef.current.srcObject;
-    if (stream) {
-        stream.getTracks().forEach((track) => track.stop()); // Stop camera
-    }
+      return () => {
+        stopCapturing();
+      };
+    }, []);
 
-    const getAllItems = async () => {
-      try {
-        const { data } = await axios.get("/api/items/get-item"); // Replace with your actual API endpoint
-        console.log(data,"all items")
-        console.log(itemNames,"detected items")
+    const capturePhoto = async () => {
+      const canvas = canvasRef.current;
+      const video = videoRef.current;
+      if (canvas && video) {
+        const context = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
         
-        const matchingItems = itemNames.reduce((acc, detectedName) => {
-          const foundItems = data.filter((item) =>
-            item.ItemName.toLowerCase() === detectedName.toLowerCase()
+        const imageUrl = canvas.toDataURL('image/jpeg');
+        setCapturedImages((prevImages) => [...prevImages, imageUrl]);
+
+        try {
+          const response = await axios.post(
+            "http://localhost:5000/predict",
+            { image: imageUrl.split(",")[1] }, 
+            { headers: { "Content-Type": "application/json" }, withCredentials: true }
           );
-          foundItems.forEach((foundItem) => {
-            const existingItem = acc.find((item) => item._id === foundItem._id);
-            if (existingItem) {
-              existingItem.quantity += 1;
-            } else {
-              acc.push({ ...foundItem, quantity: 1 }); 
-            }
-          });
-          return acc;
-        }, []);
-    
-        matchingItems.forEach((item) => {
-          const cartItem = {
-            ...item,
-            quantity: item.quantity, // Use the calculated quantity
-          };
-    
-          dispatch({
-            type: "ADD_TO_CART",
-            payload: cartItem,
-          });
-        });
-    
-        console.log("Items added to cart:", matchingItems);
-      } catch (error) {
-        console.error("Error fetching items:", error);
+
+          const result = response.data;
+          console.log("API result:", result, "count:", counter);
+          
+          setApiResults((prevResults) => [...prevResults, result]);
+
+          counter++; 
+
+          
+        if (Array.isArray(result) && result.length > 0) {
+          const detectedNames = result.map((e) => e.name.toLowerCase()); 
+          setitemNames((prevItemNames) => [...prevItemNames, ...detectedNames]);}
+        } catch (error) {
+          console.error("Error sending image to API:", error);
+        }
       }
-
     };
+
+    const startCapturing = () => {
+      if (!isCapturing) {
+        setIsCapturing(true);
+        const id = setInterval(capturePhoto, 500);
+        setIntervalId(id);
+        if (videoRef.current) {
+          videoRef.current.play();
+        }
+        
+      }
+    };
+
+    const stopCapturing = async() => {
+      if (isCapturing) {
+        setIsCapturing(false);
+        clearInterval(intervalId);
+        setIntervalId(null);
+        if (videoRef.current) {
+          videoRef.current.pause();
+        }
+      }
+      console.log(itemNames)
+      
+      const getAllItems = async () => {
+        try {
+          const { data } = await axios.get("/api/items/get-item"); 
+          console.log(data,"all items")
+          console.log(itemNames,"detected items")
+          
+          const matchingItems = itemNames.reduce((acc, detectedName) => {
+            const foundItems = data.filter((item) =>
+              item.ItemName.toLowerCase() === detectedName.toLowerCase()
+            );
+            foundItems.forEach((foundItem) => {
+              const existingItem = acc.find((item) => item._id === foundItem._id);
+              if (existingItem) {
+                existingItem.quantity += 1;
+              } else {
+                acc.push({ ...foundItem, quantity: 1 }); 
+              }
+            });
+            return acc;
+          }, []);
+      
+          matchingItems.forEach((item) => {
+            const cartItem = {
+              ...item,
+              quantity: item.quantity, 
+            };
+      
+            dispatch({
+              type: "ADD_TO_CART",
+              payload: cartItem,
+            });
+          });
+      
+          console.log("Items added to cart:", matchingItems);
+        } catch (error) {
+          console.error("Error fetching items:", error);
+        }
+
+      };
+      
     
-  
 
-    await getAllItems();
-    navigate("/cart");
-};
+      await getAllItems();
+    };
 
-
-  useEffect(() => {
-    if (capturing) {
-      const stopCaptureInterval = startCapturing();
-      return stopCaptureInterval;
-    }
-    
-  }, [capturing]);
-  return (
-    <div style={{ padding: "20px" }}>
-
-      <div style={{ position: "fixed", top: "20px", right: "20px", zIndex: 1000 }}>
-        <Row gutter={[16, 16]} justify="bottom">
-          {!capturing ? (
-            <Button type="primary" onClick={() => setCapturing(true)} size="large">
-Scan            </Button>
-          ) : (
-            <Button type="secondary" onClick={stopCapturing} size="large">
-Generate bill            </Button>
-          )}
-        </Row>
-      </div>
-
-      <div style={{ position: "fixed", top: "20px", right: "450px", zIndex: 1000 }}>
-        <video
-          ref={videoRef}
-          width="440"
-          height="280"
-          autoPlay
-          style={{ display: capturing ? 'block' : 'none', borderRadius: "8px", border: "2px solid #e0e0e0" }}
-        />
-        <canvas ref={canvasRef} width="440" height="480" style={{ display: 'none' }} />
-      </div>
-
-      {frames.length > 0 && (
-        <div style={{ marginTop: "400px" }}>
-          <Title level={3}>Captured Frames</Title>
-          <Row gutter={[16, 16]} justify="center">
-            {frames.map((frame, index) => (
-              <Col key={index} xs={24} sm={12} md={8} lg={6}>
-                <Card
-                  hoverable
-                  cover={<img src={frame.imageUrl} alt={`Captured ${index}`} />}
-                  style={{ borderRadius: "8px", overflow: "hidden" }}
-                >
-                  <Card.Meta
-                    title={`Frame ${index + 1}`}
-                    description={
-                      <div>
-                        <Text strong>Detections:</Text>
-                        <pre style={{ textAlign: "left", backgroundColor: "#f5f5f5", padding: "10px", borderRadius: "4px" }}>
-                          {frame.detection && frame.detection !== "Processing..."
-                            ? JSON.stringify(frame.detection, null, 2)
-                            : <Spin />}
-                        </pre>
-                      </div>
-                    }
-                  />
-                </Card>
+    return (
+      <div style={{ position: 'relative', height: '100vh', overflowY: 'auto' }}>
+        {loading ? (
+          <Spin />
+        ) : (
+          <>
+            <video 
+              ref={videoRef} 
+              autoPlay 
+              playsInline 
+              style={{ 
+                position: 'fixed', 
+                bottom: '20px', 
+                left: '20px', 
+                width: '300px', 
+                borderRadius: '8px',
+                zIndex: 1000, 
+                border:'2px solid red'
+              }} 
+            />
+            <canvas ref={canvasRef} style={{ display: 'none' }} />
+            
+            <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 1000 ,display:'flex',justifyContent:'space-between',width:'100%'}}>
+              <Button 
+                type="default" 
+                onClick={()=>{navigate('/inventory')}} 
+                style={{ marginLeft: '35px' }}
+              >
+  Inventory            </Button>
+              <div>
+              <Button style={{marginRight:'16px'}} type="Secondary" onClick={()=>{navigate('/cart')}} disabled={isCapturing}>
+  Generate Invoice            </Button>
+              <Button type="primary" onClick={startCapturing} disabled={isCapturing}>
+                Start Capturing
+              </Button>
+              <Button 
+                type="default" 
+                onClick={stopCapturing} 
+                disabled={!isCapturing} 
+                style={{ marginLeft: '10px' }}
+              >
+                Pause
+              </Button></div>
+            </div>
+            
+            <Row justify="center" style={{ marginTop: '80px' }}>
+              <Col span={24}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'right',width:'99%' }}>
+                  {capturedImages.map((image, index) => (
+                    <div key={index} style={{ margin: '10px', textAlign: 'center', width: '200px' }}>
+                      <img src={image} alt={`Captured ${index}`} style={{ width: '100%', borderRadius: '8px' }} />
+                      {Array.isArray(apiResults[index]) ? (
+                        apiResults[index].map((item) => (
+                          <div key={item.id} style={{ marginTop: '5px' }}>
+                            <span>{item.name}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div>No Detection</div> 
+                      )}
+                    </div>
+                  ))}
+                </div>
               </Col>
-            ))}
-          </Row>
-        </div>
-      )}
-    </div>
-  );
-};
+            </Row>
+          </>
+        )}
+      </div>
+    );
+  };
 
-export default CameraCapture;
-    
+  export default CameraCapture;
