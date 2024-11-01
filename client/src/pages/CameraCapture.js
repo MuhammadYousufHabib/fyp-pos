@@ -32,6 +32,7 @@
       };
 
       initCamera();
+      localStorage.setItem("flag",1)
 
       return () => {
         stopCapturing();

@@ -17,6 +17,13 @@ const CartPage = () => {
   const navigate = useNavigate();
   const { cartItems } = useSelector((state) => state.rootReducer);
   
+useEffect(() => {
+  if (localStorage.getItem("flag") === "1") {
+    setBillPopup(true);
+    localStorage.setItem("flag", "0");
+  }
+}, [])
+
   const handleIncrement = (record) => {
     dispatch({
       type: "UPDATE_CART",
@@ -135,7 +142,7 @@ const CartPage = () => {
         <Form layout="vertical" onFinish={handleSubmit}>
           <Form.Item name="paymentMode" label="Payment Method" required>
             <Select placeholder="Select Payment Method">
-              <Select.Option value="EasyPaise">EasyPaise</Select.Option>
+              <Select.Option value="EasyPaise">EasyPaisa</Select.Option>
               <Select.Option value="Jazzcash">Jazzcash</Select.Option>
             </Select>
           </Form.Item>
