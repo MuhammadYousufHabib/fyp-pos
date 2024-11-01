@@ -66,15 +66,15 @@ const DefaultLayout = ({ children }) => {
           <Menu.Item key="/" icon={<HomeOutlined />}>
             <Link to="/inventory">Inventory</Link>
           </Menu.Item>
-          <Menu.Item key="/bills" icon={<CopyOutlined />}>
-            <Link to="/bills">Bills</Link>
-          </Menu.Item>
           <Menu.Item key="/items" icon={<UnorderedListOutlined />}>
             <Link to="/items">Products</Link>
           </Menu.Item>
-          <Menu.Item key="/customers" icon={<UserOutlined />}>
-            <Link to="/customers">Cutomers</Link>
+          <Menu.Item key="/bills" icon={<CopyOutlined />}>
+            <Link to="/bills">Bills</Link>
           </Menu.Item>
+          {/* <Menu.Item key="/customers" icon={<UserOutlined />}>
+            <Link to="/customers">Cutomers</Link>
+          </Menu.Item> */}
           <Menu.Item key="/camera" icon={<CameraOutlined />}>
             <Link to="/camera"> Capture</Link>
           </Menu.Item>
