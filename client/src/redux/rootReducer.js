@@ -27,14 +27,14 @@ export const rootReducer = (state = intialState, action) => {
             ...state,
             cartItems: state.cartItems.map((x) =>
               x._id === existItem._id
-                ? { ...x, quantity: x.quantity + item.quantity } // Add the quantity from the payload
+                ? { ...x, quantity: x.quantity + item.quantity } 
                 : x
             ),
           };
         } else {
           return {
             ...state,
-            cartItems: [...state.cartItems, item], // Add the item with its current quantity
+            cartItems: [...state.cartItems, item], 
           };
         }
       

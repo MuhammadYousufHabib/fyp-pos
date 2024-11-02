@@ -32,6 +32,7 @@
       };
 
       initCamera();
+      
       localStorage.setItem("flag",1)
 
       return () => {
@@ -184,7 +185,7 @@
                 disabled={!isCapturing} 
                 style={{ marginLeft: '10px' }}
               >
-                Pause
+                Stop
               </Button></div>
             </div>
             
