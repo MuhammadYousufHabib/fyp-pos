@@ -79,7 +79,7 @@
     const startCapturing = () => {
       if (!isCapturing) {
         setIsCapturing(true);
-        const id = setInterval(capturePhoto, 500);
+        const id = setInterval(capturePhoto, 2000);
         setIntervalId(id);
         if (videoRef.current) {
           videoRef.current.play();
