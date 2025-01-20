@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image for YOLOv8 Prediction</title>
+</head>
+<body>
+    <h1>Upload an Image for Object Detection</h1>
+    <form action="http://127.0.0.1:5000/predict" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" required>
+        <button type="submit">Upload</button>
+    </form>
+</body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Object Detection</title>
+</head>
+<body>
+    <h1>Real-Time Object Detection</h1>
+    <video id="cameraFeed" width="640" height="480" autoplay></video>
+    <script>
+        // Access the camera
+        const video = document.getElementById('cameraFeed');
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Error accessing the camera: ", err);
+            });
+
+        // Capture frames and send them to the server
+        async function captureFrame() {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/jpeg').split(',')[1]; // Base64 encoded JPEG
+
+            // Send image data to the server
+            try {
+                const response = await fetch('http://localhost:8080/detect', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ image: imageData })
+                });
+                const data = await response.json();
+                console.log("Detection results:", data);
+            } catch (error) {
+                console.error("Error during object detection:", error);
+            }
+
+            // Repeat every 500ms
+            setTimeout(captureFrame, 500);
+        }
+
+        // Start capturing frames once the video stream is ready
+        video.onloadeddata = () => {
+            captureFrame();
+        };
+    </script>
+</body>
+</html> -->
