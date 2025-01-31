@@ -1,4 +1,5 @@
 import "antd/dist/antd.min.css";
+import './App.css'
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import CartPage from "./pages/CartPage";
 import Homepage from "./pages/Homepage";

@@ -3,6 +3,7 @@ import { Form, Input, Button } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { message } from "antd";
 import axios from "axios";
+import { UserOutlined, MailOutlined, LockOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 
 const Register = () => {
@@ -36,22 +37,22 @@ const Register = () => {
     <>
       <div className="register">
         <div className="regsiter-form">
-          <h1>POS APP</h1>
-          <h3>Register Page</h3>
+          {/* <h1>Super Store Sight</h1> */}
+          <h3 className="heading-xl">Register Page</h3>
           <Form layout="vertical" onFinish={handleSubmit}>
-            <Form.Item name="name" label="Name">
-              <Input />
+            <Form.Item name="name" label={<span style={{ display: 'none' }}>Name</span>}>
+              <Input placeholder="Name" prefix={<UserOutlined className="svg-input"/>} className="input-field"/>
             </Form.Item>
-            <Form.Item name="email" label="Email">
-              <Input />
+            <Form.Item name="email" label={<span style={{ display: 'none' }}>Email</span>}>
+              <Input placeholder="Email" prefix={<MailOutlined className="svg-input"/>}  className="input-field"/>
             </Form.Item>
-            <Form.Item name="password" label="Password">
-              <Input type="password" />
+            <Form.Item name="password" label={<span style={{ display: 'none' }}>Password</span>}>
+              <Input type="password"  placeholder="Password" prefix={<LockOutlined className="svg-input"/>} className="input-field"/>
             </Form.Item>
 
-            <div className="d-flex justify-content-between">
+            <div className="d-flex justify-content-between not-a-user">
               <p>
-                ALready Register Please
+                Already Registered?
                 <Link to="/login"> Login Here !</Link>
               </p>
               <Button type="primary" htmlType="submit">

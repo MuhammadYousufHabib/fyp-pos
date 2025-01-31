@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { message } from "antd";
 import axios from "axios";
 import { useDispatch } from "react-redux";
+import { MailOutlined, LockOutlined } from "@ant-design/icons";
+
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -42,19 +44,18 @@ const Login = () => {
     <>
       <div className="register">
         <div className="regsiter-form">
-          <h1>POS APP</h1>
-          <h3>Login Page</h3>
+          <h3 className="heading-xl">Login Page</h3>
           <Form layout="vertical" onFinish={handleSubmit}>
-            <Form.Item name="email" label="Email">
-              <Input />
+            <Form.Item name="email" label={<span style={{ display: 'none' }}>Email</span>}>
+              <Input placeholder="Email" prefix={<MailOutlined className="svg-input" />} className="input-field" />
             </Form.Item>
-            <Form.Item name="password" label="Password">
-              <Input type="password" />
+            <Form.Item name="password" label={<span style={{ display: 'none' }}>Password</span>}>
+              <Input type="password" placeholder="Password" prefix={<LockOutlined className="svg-input" />} className="input-field" />
             </Form.Item>
 
-            <div className="d-flex justify-content-between">
+            <div className="d-flex justify-content-between not-a-user">
               <p>
-                not a user Please
+                Not a user?
                 <Link to="/register"> Register Here !</Link>
               </p>
               <Button type="primary" htmlType="submit">
